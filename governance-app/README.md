@@ -12,7 +12,7 @@ This application allows users to create comprehensive governance proposals for t
 
 ## Technology Stack
 
-- ReactJS (with TypeScript)
+- ReactJS (with TypeScript) g
 - Vite for fast development and building
 - PNPM for efficient package management
 - Chakra UI for the user interface
