@@ -15,7 +15,7 @@ A powerful web application that helps community members create comprehensive gov
 
 ## 🚀 Live Demo
 
-Try the application here: [NEAR Governance Proposal Generator](https://aluhning.github.io/governance_proposal_agent/)
+Try the application here: [NEAR Governance Proposal Generator](https://aluhning.github.io/governance-proposal/)
 
 ## 🛠️ Technology Stack
 
@@ -143,6 +143,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙏 Acknowledgements
 
 - [NEAR Protocol](https://near.org/) for inspiring this project
-- [Langflow](https://langflow.ai/) for providing the AI backend
+- [Nearflow](https://ai.vitalpoint.ai/) for providing the AI backend
 - All contributors who have helped improve this project
 ```

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/governance_proposal_agent/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/governance-proposal/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Generate comprehensive governance proposals for the NEAR Protocol" />
     <title>NEAR Governance Proposal Generator</title>
@@ -26,17 +26,17 @@
       
       // Warning: this is a hack to make GitHub Pages work with React Router
       // It only runs once when the page is loaded
-      if (window.location.pathname.indexOf('/governance_proposal_agent/') === 0 && 
-          window.location.pathname !== '/governance_proposal_agent/' && 
-          window.location.pathname !== '/governance_proposal_agent/index.html') {
-        const cleanPath = window.location.pathname.replace('/governance_proposal_agent', '');
-        window.history.replaceState(null, null, '/governance_proposal_agent/#' + cleanPath);
+      if (window.location.pathname.indexOf('/governance-proposal/') === 0 && 
+          window.location.pathname !== '/governance-proposal/' && 
+          window.location.pathname !== '/governance-proposal/index.html') {
+        const cleanPath = window.location.pathname.replace('/governance-proposal', '');
+        window.history.replaceState(null, null, '/governance-proposal/#' + cleanPath);
         window.location.reload();
       }
     </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

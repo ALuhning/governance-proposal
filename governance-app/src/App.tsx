@@ -1,5 +1,5 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 
 // Customize the Chakra UI theme
@@ -32,11 +32,11 @@ const theme = extendTheme({
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Router basename="/governance_proposal_agent">
+      <BrowserRouter basename="/governance-proposal">
         <Routes>
           <Route path="*" element={<HomePage />} />
         </Routes>
-      </Router>
+      </BrowserRouter>
     </ChakraProvider>
   )
 }

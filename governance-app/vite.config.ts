@@ -5,7 +5,7 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/governance_proposal_agent/',
+  base: '/governance-proposal/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
