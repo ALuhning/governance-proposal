@@ -34,7 +34,7 @@ function App() {
     <ChakraProvider theme={theme}>
       <Router basename="/governance_proposal_agent">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="*" element={<HomePage />} />
         </Routes>
       </Router>
     </ChakraProvider>
