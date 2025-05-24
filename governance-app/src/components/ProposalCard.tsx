@@ -319,7 +319,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onClose }) => {
         </VStack>
       </Box>
       
-      <Flex justify="center" mt={8}>
+      <Flex justify="center" mt={8} gap={6}>
         <Tooltip label="Return to the proposal editor">
           <Button 
             onClick={onClose} 
@@ -331,7 +331,6 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onClose }) => {
           </Button>
         </Tooltip>
         <Button
-          ml={4}
           leftIcon={copied ? <CheckIcon /> : <CopyIcon />}
           colorScheme={copied ? "green" : "blue"}
           onClick={handleCopy}

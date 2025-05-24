@@ -13,6 +13,15 @@ export const useProposalForm = () => {
   // Track which items are currently regenerating
   const [regeneratingItems, setRegeneratingItems] = useState<{[key: string]: boolean}>({});
   
+  // States for the feedback modal
+  const [feedbackModalState, setFeedbackModalState] = useState({
+    isOpen: false,
+    section: null as ProposalSection | null,
+    type: null as 'section' | 'item' | null,
+    index: undefined as number | undefined,
+    content: ''
+  });
+  
   const { 
     formData, 
     locked, 
@@ -65,14 +74,46 @@ export const useProposalForm = () => {
   };
   
   /**
-   * Regenerates a specific section of the proposal
+   * Opens the feedback modal for a specific section
    * @param section - The section to regenerate
    */
-  const regenerateSection = async (section: ProposalSection) => {
+  const openFeedbackForSection = (section: ProposalSection) => {
+    // Only allow regeneration if section is not locked
+    if (locked[section]) {
+      return;
+    }
+    
+    // Get the current content of the section
+    const currentContent = formData[section];
+    
+    // Prepare the text to show in the feedback modal
+    const textToShow = Array.isArray(currentContent) 
+      ? currentContent.join('\n')  // Convert array to string for list sections
+      : currentContent;            // Text sections can be used as is
+    
+    // Set the feedback modal state
+    setFeedbackModalState({
+      isOpen: true,
+      section: section,
+      type: 'section',
+      index: undefined,
+      content: textToShow
+    });
+  };
+  
+  /**
+   * Regenerates a specific section of the proposal with optional feedback
+   * @param section - The section to regenerate
+   * @param feedback - Optional user feedback to guide the regeneration
+   */
+  const regenerateSection = async (section: ProposalSection, feedback?: string) => {
     // Only regenerate if section is not locked
     if (locked[section]) {
       return;
     }
+    
+    // Close the feedback modal if it's open
+    setFeedbackModalState(prev => ({ ...prev, isOpen: false }));
     
     // Mark this section as regenerating
     const sectionId = `section-${section}`;
@@ -91,11 +132,11 @@ export const useProposalForm = () => {
       // Different handling based on section type
       if (typeof currentContent === 'string') {
         // For text sections (title, summary, problem)
-        const regeneratedText = await regenerateSectionContent(textToRegenerate);
+        const regeneratedText = await regenerateSectionContent(textToRegenerate, feedback);
         updateSection(section, regeneratedText);
       } else if (Array.isArray(currentContent)) {
         // For list sections
-        const regeneratedText = await regenerateSectionContent(textToRegenerate);
+        const regeneratedText = await regenerateSectionContent(textToRegenerate, feedback);
         
         // Special handling for references section
         let regeneratedArray;
@@ -147,15 +188,52 @@ export const useProposalForm = () => {
   };
   
   /**
-   * Regenerates a specific item in a list section
+   * Opens the feedback modal for a specific item in a list section
    * @param section - The section containing the item
    * @param index - The index of the item in the array
    */
-  const regenerateItem = async (section: ProposalSection, index: number) => {
+  const openFeedbackForItem = (section: ProposalSection, index: number) => {
+    // Only allow regeneration if section is not locked
+    if (locked[section]) {
+      return;
+    }
+    
+    // Get the current content of the section
+    const sectionContent = formData[section];
+    
+    // Make sure this is an array section and the index is valid
+    if (!Array.isArray(sectionContent) || index < 0 || index >= sectionContent.length) {
+      console.error(`Invalid array index ${index} for section ${section}`);
+      return;
+    }
+    
+    // Get the current item text
+    const currentItemText = sectionContent[index];
+    
+    // Set the feedback modal state
+    setFeedbackModalState({
+      isOpen: true,
+      section: section,
+      type: 'item',
+      index: index,
+      content: currentItemText
+    });
+  };
+  
+  /**
+   * Regenerates a specific item in a list section with optional feedback
+   * @param section - The section containing the item
+   * @param index - The index of the item in the array
+   * @param feedback - Optional user feedback to guide the regeneration
+   */
+  const regenerateItem = async (section: ProposalSection, index: number, feedback?: string) => {
     // Only regenerate if section is not locked
     if (locked[section]) {
       return;
     }
+    
+    // Close the feedback modal if it's open
+    setFeedbackModalState(prev => ({ ...prev, isOpen: false }));
     
     // Get the current content of the section
     const sectionContent = formData[section];
@@ -176,7 +254,7 @@ export const useProposalForm = () => {
       const currentItemText = sectionContent[index];
       
       // Regenerate just this item
-      const regeneratedText = await regenerateSectionContent(currentItemText);
+      const regeneratedText = await regenerateSectionContent(currentItemText, feedback);
       
       // Create a new array with the regenerated item
       const updatedItems = [...sectionContent];
@@ -256,6 +334,47 @@ export const useProposalForm = () => {
     setAllLocked(!allLocked);
   };
   
+  /**
+   * Handles feedback submission from the modal
+   * @param feedback - The feedback provided by the user
+   */
+  const handleFeedbackSubmit = (feedback: string) => {
+    const { section, type, index } = feedbackModalState;
+    
+    if (!section) return;
+    
+    if (type === 'section') {
+      regenerateSection(section as ProposalSection, feedback);
+    } else if (type === 'item' && index !== undefined) {
+      regenerateItem(section as ProposalSection, index, feedback);
+    }
+  };
+  
+  /**
+   * Close the feedback modal
+   */
+  const closeFeedbackModal = () => {
+    setFeedbackModalState(prev => ({ ...prev, isOpen: false }));
+  };
+
+  // Instead of providing the feedback modal component, provide the required state and handlers
+  const getFeedbackModalProps = () => ({
+    isOpen: feedbackModalState.isOpen,
+    onClose: closeFeedbackModal,
+    onSubmit: handleFeedbackSubmit,
+    title: feedbackModalState.section 
+      ? (feedbackModalState.type === 'section' 
+        ? formatSectionName(feedbackModalState.section as ProposalSection) 
+        : `${formatSectionName(feedbackModalState.section as ProposalSection)} Item`)
+      : '',
+    content: feedbackModalState.content,
+    isLoading: feedbackModalState.section 
+      ? (feedbackModalState.type === 'section' 
+        ? !!regeneratingItems[`section-${feedbackModalState.section}`] 
+        : !!regeneratingItems[`${feedbackModalState.section}-${feedbackModalState.index}`])
+      : false
+  });
+  
   return {
     isLoading,
     error,
@@ -270,6 +389,13 @@ export const useProposalForm = () => {
     toggleSectionLock,
     toggleAllLocked,
     setFormData,
+    // New exports for feedback functionality
+    openFeedbackForSection,
+    openFeedbackForItem,
+    closeFeedbackModal,
+    handleFeedbackSubmit,
+    feedbackModalState,
+    getFeedbackModalProps
   };
 };
 

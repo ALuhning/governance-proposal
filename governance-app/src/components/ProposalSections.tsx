@@ -82,12 +82,13 @@ export const TextSection: React.FC<TextSectionProps> = ({
             onClick={onToggleLock}
           />
           <IconButton
-            aria-label="Regenerate section"
+            aria-label="Regenerate with feedback"
             icon={<RepeatIcon />}
             size="sm"
             onClick={onRegenerate}
             isDisabled={locked || regeneratingItems[`section-${section}`]}
             isLoading={regeneratingItems[`section-${section}`]}
+            title="Regenerate with feedback"
           />
         </HStack>
       </Flex>
@@ -253,12 +254,13 @@ export const ListSection: React.FC<ListSectionProps> = ({
             onClick={onToggleLock}
           />
           <IconButton
-            aria-label="Regenerate section"
+            aria-label="Regenerate with feedback"
             icon={<RepeatIcon />}
             size="sm"
             onClick={onRegenerate}
             isDisabled={locked || regeneratingItems[`section-${section}`]}
             isLoading={regeneratingItems[`section-${section}`]}
+            title="Regenerate with feedback"
           />
         </HStack>
       </Flex>
@@ -308,13 +310,16 @@ export const ListSection: React.FC<ListSectionProps> = ({
                   <VStack>
                     {onRegenerateItem && (
                       <IconButton
-                        aria-label="Regenerate item"
+                        aria-label="Regenerate item with feedback"
                         icon={<RepeatIcon />}
                         size="sm"
-                        onClick={() => onRegenerateItem(index)}
+                        onClick={() => {
+                          if (onRegenerateItem) onRegenerateItem(index);
+                        }}
                         isDisabled={regeneratingItems && regeneratingItems[`${section}-${index}`] || locked}
                         isLoading={regeneratingItems && regeneratingItems[`${section}-${index}`]}
                         colorScheme="blue"
+                        title="Regenerate with feedback"
                       />
                     )}
                     <IconButton

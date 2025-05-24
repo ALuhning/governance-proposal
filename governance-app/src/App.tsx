@@ -32,7 +32,7 @@ const theme = extendTheme({
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Router>
+      <Router basename="/governance_proposal_agent">
         <Routes>
           <Route path="/" element={<HomePage />} />
         </Routes>

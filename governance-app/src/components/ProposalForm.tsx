@@ -20,6 +20,7 @@ import { TextSection, ListSection } from './ProposalSections';
 import { ProposalSection } from '../types/proposalTypes';
 import { formatSectionName } from '../utils/proposalUtils';
 import ProposalCard from './ProposalCard';
+import FeedbackModal from './FeedbackModal';
 
 interface ProposalFormProps {
   initialIdea?: string; // Optional now since we don't use it directly
@@ -37,11 +38,15 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
     allLocked,
     regeneratingItems,
     updateSection,
-    regenerateSection,
-    regenerateItem,
     toggleSectionLock,
     toggleAllLocked,
-    setFormData
+    setFormData,
+    // Feedback functionality
+    openFeedbackForSection,
+    openFeedbackForItem,
+    feedbackModalState,
+    closeFeedbackModal,
+    handleFeedbackSubmit
   } = useProposalForm();
   
   const toast = useToast();
@@ -69,6 +74,12 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
     
     // Show the proposal card after submission
     setShowProposalCard(true);
+    
+    // Scroll to the top of the page for better user experience
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
   
   // Handle closing the proposal card
@@ -202,7 +213,7 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.proposal_title}
           locked={!!locked[ProposalSection.TITLE]}
           onChange={(value) => updateSection(ProposalSection.TITLE, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.TITLE)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.TITLE)}
           onToggleLock={() => toggleSectionLock(ProposalSection.TITLE)}
           regeneratingItems={regeneratingItems}
         />
@@ -212,7 +223,7 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.proposal_summary}
           locked={!!locked[ProposalSection.SUMMARY]}
           onChange={(value) => updateSection(ProposalSection.SUMMARY, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.SUMMARY)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.SUMMARY)}
           onToggleLock={() => toggleSectionLock(ProposalSection.SUMMARY)}
           regeneratingItems={regeneratingItems}
         />
@@ -222,7 +233,7 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.problem}
           locked={!!locked[ProposalSection.PROBLEM]}
           onChange={(value) => updateSection(ProposalSection.PROBLEM, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.PROBLEM)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.PROBLEM)}
           onToggleLock={() => toggleSectionLock(ProposalSection.PROBLEM)}
           regeneratingItems={regeneratingItems}
         />
@@ -233,8 +244,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.solution}
           locked={!!locked[ProposalSection.SOLUTION]}
           onChange={(value) => updateSection(ProposalSection.SOLUTION, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.SOLUTION)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.SOLUTION, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.SOLUTION)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.SOLUTION, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.SOLUTION)}
           regeneratingItems={regeneratingItems}
         />
@@ -244,8 +255,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.milestones}
           locked={!!locked[ProposalSection.MILESTONES]}
           onChange={(value) => updateSection(ProposalSection.MILESTONES, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.MILESTONES)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.MILESTONES, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.MILESTONES)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.MILESTONES, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.MILESTONES)}
           regeneratingItems={regeneratingItems}
         />
@@ -255,8 +266,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.outcomes}
           locked={!!locked[ProposalSection.OUTCOMES]}
           onChange={(value) => updateSection(ProposalSection.OUTCOMES, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.OUTCOMES)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.OUTCOMES, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.OUTCOMES)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.OUTCOMES, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.OUTCOMES)}
           regeneratingItems={regeneratingItems}
         />
@@ -266,8 +277,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.stakeholder_impact}
           locked={!!locked[ProposalSection.STAKEHOLDER_IMPACT]}
           onChange={(value) => updateSection(ProposalSection.STAKEHOLDER_IMPACT, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.STAKEHOLDER_IMPACT)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.STAKEHOLDER_IMPACT, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.STAKEHOLDER_IMPACT)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.STAKEHOLDER_IMPACT, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.STAKEHOLDER_IMPACT)}
           regeneratingItems={regeneratingItems}
         />
@@ -277,8 +288,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.resources}
           locked={!!locked[ProposalSection.RESOURCES]}
           onChange={(value) => updateSection(ProposalSection.RESOURCES, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.RESOURCES)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.RESOURCES, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.RESOURCES)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.RESOURCES, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.RESOURCES)}
           regeneratingItems={regeneratingItems}
         />
@@ -288,8 +299,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.risks}
           locked={!!locked[ProposalSection.RISKS]}
           onChange={(value) => updateSection(ProposalSection.RISKS, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.RISKS)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.RISKS, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.RISKS)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.RISKS, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.RISKS)}
           regeneratingItems={regeneratingItems}
         />
@@ -299,8 +310,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.alternatives}
           locked={!!locked[ProposalSection.ALTERNATIVES]}
           onChange={(value) => updateSection(ProposalSection.ALTERNATIVES, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.ALTERNATIVES)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.ALTERNATIVES, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.ALTERNATIVES)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.ALTERNATIVES, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.ALTERNATIVES)}
           regeneratingItems={regeneratingItems}
         />
@@ -310,8 +321,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.implementation}
           locked={!!locked[ProposalSection.IMPLEMENTATION]}
           onChange={(value) => updateSection(ProposalSection.IMPLEMENTATION, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.IMPLEMENTATION)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.IMPLEMENTATION, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.IMPLEMENTATION)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.IMPLEMENTATION, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.IMPLEMENTATION)}
           regeneratingItems={regeneratingItems}
         />
@@ -321,8 +332,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.metrics}
           locked={!!locked[ProposalSection.METRICS]}
           onChange={(value) => updateSection(ProposalSection.METRICS, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.METRICS)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.METRICS, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.METRICS)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.METRICS, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.METRICS)}
           regeneratingItems={regeneratingItems}
         />
@@ -332,8 +343,8 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
           value={formData.references}
           locked={!!locked[ProposalSection.REFERENCES]}
           onChange={(value) => updateSection(ProposalSection.REFERENCES, value)}
-          onRegenerate={() => regenerateSection(ProposalSection.REFERENCES)}
-          onRegenerateItem={(index) => regenerateItem(ProposalSection.REFERENCES, index)}
+          onRegenerate={() => openFeedbackForSection(ProposalSection.REFERENCES)}
+          onRegenerateItem={(index) => openFeedbackForItem(ProposalSection.REFERENCES, index)}
           onToggleLock={() => toggleSectionLock(ProposalSection.REFERENCES)}
           regeneratingItems={regeneratingItems}
         />
@@ -358,6 +369,24 @@ const ProposalForm: React.FC<ProposalFormProps> = () => {
             {allSectionsLocked ? 'Submit Proposal' : 'Lock All Sections to Submit'}
           </Button>
         </Box>
+        
+        {/* Feedback Modal */}
+        <FeedbackModal
+          isOpen={feedbackModalState.isOpen}
+          onClose={closeFeedbackModal}
+          onSubmit={handleFeedbackSubmit}
+          title={feedbackModalState.section 
+            ? (feedbackModalState.type === 'section' 
+              ? formatSectionName(feedbackModalState.section) 
+              : `${formatSectionName(feedbackModalState.section)} Item`)
+            : ''}
+          content={feedbackModalState.content}
+          isLoading={feedbackModalState.section 
+            ? (feedbackModalState.type === 'section' 
+              ? !!regeneratingItems[`section-${feedbackModalState.section}`] 
+              : !!regeneratingItems[`${feedbackModalState.section}-${feedbackModalState.index}`])
+            : false}
+        />
       </VStack>
     </Container>
   );

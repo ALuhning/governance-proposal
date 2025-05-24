@@ -34,9 +34,10 @@ interface ExtendedResults {
 /**
  * Regenerates a specific section of the proposal
  * @param sectionText - The current content of the section to regenerate
+ * @param feedback - Optional user feedback to guide the regeneration
  * @returns A string with the regenerated content for that section
  */
-export const regenerateSectionContent = async (sectionText: string): Promise<string> => {
+export const regenerateSectionContent = async (sectionText: string, feedback?: string): Promise<string> => {
   try {
     const apiKey = import.meta.env.VITE_LANGFLOW_API_KEY;
     
@@ -44,10 +45,17 @@ export const regenerateSectionContent = async (sectionText: string): Promise<str
       throw new Error('Langflow API key not found. Please set VITE_LANGFLOW_API_KEY in your environment variables.');
     }
 
+    // Format input with feedback if provided
+    let inputValue = sectionText;
+    if (feedback && feedback.trim()) {
+      // Add the feedback using the Original/Feedback structure
+      inputValue = `Original: ${sectionText}\nFeedback: ${feedback.trim()}\n\nPlease regenerate the content considering this feedback.`;
+    }
+
     const response = await axios.post(
       REGENERATE_SECTION_API_URL,
       {
-        input_value: sectionText,
+        input_value: inputValue,
         output_type: 'chat',
         input_type: 'chat'
       },
