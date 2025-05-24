@@ -1,38 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/governance-proposal/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Generate comprehensive governance proposals for the NEAR Protocol" />
-    <title>NEAR Governance Proposal Generator</title>
+    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>NEAR Governance Proposal Generator</title>
+    <!-- This script helps with SPA routing on GitHub Pages -->
     <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      // This script checks to see if a redirect is present in the query string,
-      // converts it back into the correct url and adds it to the browser history.
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
+      (function() {
+        // If we're not on the homepage and we're not viewing a file
+        // We need to redirect to the hash router format
+        var path = window.location.pathname;
+        var repoName = '/governance-proposal';
+        
+        if (path.indexOf(repoName) === 0 && 
+            path !== repoName + '/' && 
+            path !== repoName + '/index.html') {
+          
+          var route = path.substring(path.indexOf(repoName) + repoName.length);
+          window.location.replace(window.location.origin + repoName + '/#' + route);
         }
-      }(window.location))
-      
-      // Warning: this is a hack to make GitHub Pages work with React Router
-      // It only runs once when the page is loaded
-      if (window.location.pathname.indexOf('/governance-proposal/') === 0 && 
-          window.location.pathname !== '/governance-proposal/' && 
-          window.location.pathname !== '/governance-proposal/index.html') {
-        const cleanPath = window.location.pathname.replace('/governance-proposal', '');
-        window.history.replaceState(null, null, '/governance-proposal/#' + cleanPath);
-        window.location.reload();
-      }
+      })();
     </script>
   </head>
   <body>

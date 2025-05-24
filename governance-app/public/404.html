@@ -4,31 +4,19 @@
   <meta charset="utf-8">
   <title>Redirecting...</title>
   <script>
-    // Single Page Apps for GitHub Pages
-    // MIT License
-    // https://github.com/rafgraph/spa-github-pages
-    // This script takes the current URL and redirects to the proper URL for a single page app on GitHub Pages
-    
-    (function(l) {
-      if (l.search[1] === '/' ) {
-        var decoded = l.search.slice(1).split('&').map(function(s) { 
-          return s.replace(/~and~/g, '&')
-        }).join('?');
-        window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-        );
-      }
-    }(window.location))
-    
-    // Redirect to the index.html with a special query parameter
-    var pathSegmentsToKeep = 1;
+    // This is a special hack for GitHub Pages and Single Page Applications
+    // It takes the current URL path and redirects to the homepage with a route hash
+    var segmentCount = 1; // Number of segments in your GitHub Pages URL (1 for username.github.io/repo/)
     var l = window.location;
+    
+    // Extract the path from after the repository name
+    var repo = '/governance-proposal';
+    var path = l.pathname.substring(l.pathname.indexOf(repo) + repo.length);
+    
+    // Redirect to the homepage with the path as a hash route
     l.replace(
       l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      '/governance-proposal/?/' +
-      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash
+      repo + '/#' + path
     );
   </script>
 </head>

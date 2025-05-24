@@ -1,27 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import * as path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/governance-proposal/',
+  base: './', // Use relative paths
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        manualChunks: undefined,
-        assetFileNames: 'assets/[name].[hash].[ext]',
-        chunkFileNames: 'assets/[name].[hash].js',
-        entryFileNames: 'assets/[name].[hash].js',
-      },
-    },
-    sourcemap: true,
+    emptyOutDir: true,
+    minify: true,
+    // Generate manifest for better resource tracking
+    manifest: true,
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 })
