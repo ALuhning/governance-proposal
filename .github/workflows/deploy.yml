@@ -44,6 +44,14 @@ jobs:
         env:
           VITE_LANGFLOW_API_KEY: ${{ secrets.VITE_LANGFLOW_API_KEY }}
       
+      - name: Prepare dist directory for GitHub Pages
+        run: |
+          cd governance-app
+          cp public/404.html dist/
+          cp public/_redirects dist/
+          touch dist/.nojekyll
+          # No CNAME file, we're using GitHub Pages with subdirectory
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
