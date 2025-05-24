@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://YOUR_GITHUB_USERNAME.github.io/governance_proposal_agent",
+  "homepage": "https://ALuhning.github.io/governance_proposal_agent",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
